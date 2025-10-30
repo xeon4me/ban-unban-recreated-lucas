@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WhatsApp Ban/Unban</title>
+  <style>
+    /* Dark Theme */
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0a0a0a;
+      color: #e0e0e0;
+    }
+    .app {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+    .logo {
+      font-size: 24px;
+      font-weight: bold;
+      color: #fff;
+    }
+    .logo span {
+      color: #25D366;
+    }
+    .badge {
+      background: #25D366;
+      color: #000;
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    h1, h2 {
+      color: #fff;
+    }
+    .page {
+      display: none;
+    }
+    .page.active {
+      display: block;
+    }
+    .cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-top: 20px;
+    }
+    .card {
+      padding: 30px;
+      border: 2px solid #2a2a2a;
+      border-radius: 10px;
+      cursor: pointer;
+      background: #1a1a1a;
+      transition: all 0.3s;
+      text-align: center;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    .card.danger {
+      border-color: #ff4444;
+    }
+    .card.danger:hover {
+      background: rgba(255, 68, 68, 0.1);
+    }
+    .card.success {
+      border-color: #25D366;
+    }
+    .card.success:hover {
+      background: rgba(37, 211, 102, 0.1);
+    }
+    .icon {
+      font-size: 48px;
+      margin-bottom: 10px;
+    }
+    .title {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 5px;
+      color: #fff;
+    }
+    .desc {
+      color: #888;
+      font-size: 14px;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    label {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      color: #ccc;
+      font-size: 14px;
+    }
+    input, select, textarea {
+      padding: 12px;
+      border: 1px solid #2a2a2a;
+      border-radius: 5px;
+      font-size: 14px;
+      background: #1a1a1a;
+      color: #e0e0e0;
+      transition: border-color 0.3s;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #25D366;
+    }
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+    .row {
+      display: flex;
+      gap: 10px;
+    }
+    .actions {
+      margin-top: 10px;
+    }
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.3s;
+      flex: 1;
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+    .btn.primary {
+      background: #25D366;
+      color: #000;
+    }
+    .btn.primary:hover {
+      background: #20bd5a;
+    }
+    .btn.ghost {
+      background: transparent;
+      border: 1px solid #2a2a2a;
+      color: #e0e0e0;
+    }
+    .btn.ghost:hover {
+      background: #1a1a1a;
+      border-color: #25D366;
+    }
+    .terminal {
+      background: #000;
+      color: #0f0;
+      padding: 20px;
+      border-radius: 5px;
+      min-height: 200px;
+      font-family: 'Courier New', monospace;
+      margin: 20px 0;
+      font-size: 13px;
+      line-height: 1.6;
+      overflow-y: auto;
+      max-height: 300px;
+      box-shadow: inset 0 0 20px rgba(0,255,0,0.1);
+    }
+    .progress-wrap {
+      background: #1a1a1a;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid #2a2a2a;
+    }
+    .progress {
+      height: 20px;
+      background: linear-gradient(90deg, #25D366, #20bd5a);
+      width: 0%;
+      transition: width 0.3s;
+    }
+    .result-icon {
+      font-size: 72px;
+      text-align: center;
+      margin: 20px 0;
+    }
+    .result-text {
+      text-align: center;
+      margin: 20px 0;
+      color: #ccc;
+      line-height: 1.6;
+    }
+    .disclaimer {
+      text-align: center;
+      color: #666;
+      font-size: 12px;
+      margin-top: 20px;
+      font-style: italic;
+    }
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 50px;
+      padding-top: 20px;
+      border-top: 1px solid #2a2a2a;
+      font-size: 12px;
+      color: #666;
+    }
+    .link {
+      color: #25D366;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    .link:hover {
+      color: #20bd5a;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="header">
+      <div class="logo">Bugs<span>Tech</span></div>
+      <div class="badge">Ban and Unban</div>
+    </header>
+
+    <!-- Page 1: Mode Select -->
+    <section id="page-select" class="page active">
+      <h1>WhatsApp Ban / Unban </h1>
+      
+      <div class="cards">
+        <button class="card danger" data-mode="ban">
+          <div class="icon">🚫</div>
+          <div class="title">Ban</div>
+          <div class="desc">Banning a number</div>
+        </button>
+        <button class="card success" data-mode="unban">
+          <div class="icon">✅</div>
+          <div class="title">Unban</div>
+          <div class="desc">Unbanning a number</div>
+        </button>
+      </div>
+    </section>
+
+    <!-- Page 2: Details Form -->
+    <section id="page-form" class="page">
+      <h2 id="form-title">Enter Details</h2>
+      <form id="flow-form">
+        <label>
+          Phone Number
+          <input type="tel" id="phone" placeholder="+237653871607" maxlength="20" required>
+        </label>
+
+        <label>
+          <span id="type-label">Type</span>
+          <select id="type">
+            <!-- options filled by JS per mode -->
+          </select>
+        </label>
+
+        <label>
+          Reason (optional)
+          <textarea id="reason" placeholder="Enter your reason..."></textarea>
+        </label>
+
+        <div class="row actions">
+          <button type="button" id="back-to-select" class="btn ghost">Back</button>
+          <button type="submit" class="btn primary" id="start-process">Continue</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Page 3: Hacking Animation -->
+    <section id="page-hack" class="page">
+      <h2>Processing…</h2>
+      <div class="terminal" id="terminal"></div>
+      <div class="progress-wrap"><div class="progress" id="progress"></div></div>
+    </section>
+
+    <!-- Page 4: Result -->
+    <section id="page-result" class="page">
+      <div id="result-icon" class="result-icon">✅</div>
+      <h2 id="result-title">Success</h2>
+      <p id="result-text" class="result-text"></p>
+      <div class="row actions">
+        <button id="again" class="btn ghost">Home</button>
+        <button id="repeat" class="btn">Run Again</button>
+      </div>
+      <p class="disclaimer">
+        Disclaimer: use this tool at your own risk and you are responsible of your action
+      </p>
+    </section>
+
+    <footer class="footer">
+      <span>© 2025 WA Sim • Bugs-Lucas</span>
+      <a href="#" id="toggle-theme" class="link">Toggle Theme</a>
+    </footer>
+  </div>
+
+  <script>
+    // State
+    let currentMode = '';
+    let userData = {};
+
+    // Ban/Unban options
+    const banTypes = ['Temporary', 'Permanent', 'Soft Ban'];
+    const unbanTypes = ['Appeal Request', 'Restore Access', 'Full Unban'];
+
+    // Elements
+    const pages = {
+      select: document.getElementById('page-select'),
+      form: document.getElementById('page-form'),
+      hack: document.getElementById('page-hack'),
+      result: document.getElementById('page-result')
+    };
+
+    const formTitle = document.getElementById('form-title');
+    const typeLabel = document.getElementById('type-label');
+    const typeSelect = document.getElementById('type');
+    const phoneInput = document.getElementById('phone');
+    const reasonInput = document.getElementById('reason');
+    const terminal = document.getElementById('terminal');
+    const progress = document.getElementById('progress');
+    const resultIcon = document.getElementById('result-icon');
+    const resultTitle = document.getElementById('result-title');
+    const resultText = document.getElementById('result-text');
+
+    // Terminal messages
+    const banMessages = [
+      '> Connecting to WhatsApp servers...',
+      '> Authenticating credentials...',
+      '> Locating target number...',
+      '> Scanning account activity...',
+      '> Analyzing violations...',
+      '> Generating ban request...',
+      '> Submitting to moderation system...',
+      '> Processing ban order...',
+      '> Updating account status...',
+      '> Ban completed successfully!'
+    ];
+
+    const unbanMessages = [
+      '> Connecting to WhatsApp servers...',
+      '> Authenticating credentials...',
+      '> Locating banned account...',
+      '> Reviewing ban history...',
+      '> Checking appeal eligibility...',
+      '> Generating unban request...',
+      '> Submitting to review system...',
+      '> Processing restoration...',
+      '> Updating account status...',
+      '> Unban completed successfully!'
+    ];
+
+    // Event Listeners
+    document.querySelectorAll('.card').forEach(card => {
+      card.addEventListener('click', () => {
+        currentMode = card.dataset.mode;
+        showPage('form');
+        setupForm();
+      });
+    });
+
+    document.getElementById('back-to-select').addEventListener('click', () => {
+      showPage('select');
+      resetForm();
+    });
+
+    document.getElementById('flow-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      userData = {
+        phone: phoneInput.value,
+        type: typeSelect.value,
+        reason: reasonInput.value
+      };
+      startProcess();
+    });
+
+    document.getElementById('again').addEventListener('click', () => {
+      showPage('select');
+      resetForm();
+    });
+
+    document.getElementById('repeat').addEventListener('click', () => {
+      showPage('form');
+    });
+
+    document.getElementById('toggle-theme').addEventListener('click', (e) => {
+      e.preventDefault();
+      document.body.classList.toggle('dark-theme');
+    });
+
+    // Functions
+    function showPage(pageName) {
+      Object.values(pages).forEach(page => page.classList.remove('active'));
+      pages[pageName].classList.add('active');
+    }
+
+    function setupForm() {
+      if (currentMode === 'ban') {
+        formTitle.textContent = 'Ban Details';
+        typeLabel.textContent = 'Ban Type';
+        typeSelect.innerHTML = banTypes.map(type => 
+          `<option value="${type}">${type}</option>`
+        ).join('');
+      } else {
+        formTitle.textContent = 'Unban Details';
+        typeLabel.textContent = 'Unban Type';
+        typeSelect.innerHTML = unbanTypes.map(type => 
+          `<option value="${type}">${type}</option>`
+        ).join('');
+      }
+    }
+
+    function resetForm() {
+      phoneInput.value = '';
+      reasonInput.value = '';
+      currentMode = '';
+      userData = {};
+    }
+
+    async function startProcess() {
+      showPage('hack');
+      terminal.innerHTML = '';
+      progress.style.width = '0%';
+
+      const messages = currentMode === 'ban' ? banMessages : unbanMessages;
+      
+      for (let i = 0; i < messages.length; i++) {
+        await sleep(400 + Math.random() * 300);
+        terminal.innerHTML += messages[i] + '\n';
+        terminal.scrollTop = terminal.scrollHeight;
+        progress.style.width = ((i + 1) / messages.length * 100) + '%';
+      }
+
+      await sleep(500);
+      showResult();
+    }
+
+    function showResult() {
+      showPage('result');
+      
+      if (currentMode === 'ban') {
+        resultIcon.textContent = '🚫';
+        resultTitle.textContent = 'Ban Successful';
+        resultText.textContent = `The number ${userData.phone} has been ${userData.type.toLowerCase()} banned. Type: ${userData.type}`;
+      } else {
+        resultIcon.textContent = '✅';
+        resultTitle.textContent = 'Unban Successful';
+        resultText.textContent = `The number ${userData.phone} has been unbanned successfully. Type: ${userData.type}`;
+      }
+    }
+
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+  </script>
+</body>
+</html>
